@@ -5,7 +5,7 @@ import { BreathingExercise } from './components/BreathingExercise';
 import { BubbleWrap } from './components/BubbleWrap';
 import { GroundingExercise } from './components/GroundingExercise';
 import { ToolButton } from './components/ToolButton';
-import { speak, toggleMute, isMuted } from './services/speechService';
+import { speak, toggleMute, isMuted } from './src/services/speechService';
 import { AFFIRMATIONS } from './constants';
 
 // SVG Icons defined outside the component for performance

@@ -1,25 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cope & Calm</title>
-    <script>
-      (function () {
-        var isGitHubPages = /github\.io$/.test(window.location.hostname);
-        var isAlreadyInDocs = window.location.pathname.indexOf('/docs/') !== -1;
-        if (isGitHubPages && !isAlreadyInDocs) {
-          var basePath = window.location.pathname;
-          if (!/\/$/.test(basePath)) basePath += '/';
-          window.location.replace(basePath + 'docs/');
-        }
-      })();
-    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
-        darkMode: 'media', // or 'class'
+        darkMode: 'media',
         theme: {
           extend: {
             keyframes: {
@@ -41,8 +29,7 @@
         },
       }
     </script>
-  <!-- Removed importmap; Vite bundles dependencies -->
-</head>
+  </head>
   <body class="bg-slate-100 dark:bg-gray-900">
     <div id="root"></div>
     <script type="module" src="/index.jsx"></script>
