@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { speak } from '../services/speechService';
 
@@ -8,13 +7,8 @@ const SpeakerIcon = () => (
     </svg>
 );
 
-
-interface AffirmationDisplayProps {
-    affirmation: string;
-}
-
-export const AffirmationDisplay: React.FC<AffirmationDisplayProps> = ({ affirmation }) => {
-    const handleSpeak = (e: React.MouseEvent) => {
+export const AffirmationDisplay = ({ affirmation }) => {
+    const handleSpeak = (e) => {
         e.stopPropagation();
         speak(affirmation);
     };
@@ -32,3 +26,5 @@ export const AffirmationDisplay: React.FC<AffirmationDisplayProps> = ({ affirmat
         </div>
     );
 };
+
+

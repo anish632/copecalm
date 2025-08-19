@@ -1,13 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { GROUNDING_STEPS } from '../constants';
 import { speak } from '../services/speechService';
 
-interface GroundingExerciseProps {
-    onClose: () => void;
-}
-
-export const GroundingExercise: React.FC<GroundingExerciseProps> = ({ onClose }) => {
+export const GroundingExercise = ({ onClose }) => {
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -24,7 +19,7 @@ export const GroundingExercise: React.FC<GroundingExerciseProps> = ({ onClose })
     };
     
     useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
+        const handleKeyPress = (e) => {
             if (e.key === 'Escape') {
                 onClose();
             } else if (e.key === 'Enter') {
@@ -33,9 +28,7 @@ export const GroundingExercise: React.FC<GroundingExerciseProps> = ({ onClose })
         };
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [step, onClose]);
-
 
     const currentStep = GROUNDING_STEPS[step];
     const progress = ((step + 1) / GROUNDING_STEPS.length) * 100;
@@ -68,3 +61,5 @@ export const GroundingExercise: React.FC<GroundingExerciseProps> = ({ onClose })
         </div>
     );
 };
+
+

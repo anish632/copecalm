@@ -1,5 +1,4 @@
-
-export const AFFIRMATIONS: string[] = [
+export const AFFIRMATIONS = [
     "This feeling is temporary and will pass.",
     "I am in control of my actions.",
     "I choose to treat my body with kindness.",
@@ -38,3 +37,5 @@ export const GROUNDING_STEPS = [
         instruction: "Focus on 1 thing you can taste. It might be the lingering taste of your last meal, or you can simply notice the taste of your own tongue."
     }
 ];
+
+

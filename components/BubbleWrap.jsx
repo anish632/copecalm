@@ -1,13 +1,8 @@
-
-import React, { useState, useEffect } from 'react';
-
-interface BubbleWrapProps {
-    onClose: () => void;
-}
+import React, { useState } from 'react';
 
 const BUBBLE_COUNT = 100; // 10x10 grid
 
-const Bubble: React.FC<{ popped: boolean; onPop: () => void }> = ({ popped, onPop }) => {
+const Bubble = ({ popped, onPop }) => {
     const [isPopped, setIsPopped] = useState(popped);
     const [isAnimating, setIsAnimating] = useState(false);
 
@@ -32,11 +27,10 @@ const Bubble: React.FC<{ popped: boolean; onPop: () => void }> = ({ popped, onPo
     );
 };
 
-
-export const BubbleWrap: React.FC<BubbleWrapProps> = ({ onClose }) => {
+export const BubbleWrap = ({ onClose }) => {
     const [bubbles, setBubbles] = useState(() => Array(BUBBLE_COUNT).fill(false));
 
-    const popBubble = (index: number) => {
+    const popBubble = (index) => {
         setBubbles(currentBubbles => {
             const newBubbles = [...currentBubbles];
             newBubbles[index] = true;
@@ -48,16 +42,6 @@ export const BubbleWrap: React.FC<BubbleWrapProps> = ({ onClose }) => {
         setBubbles(Array(BUBBLE_COUNT).fill(false));
     }
     
-    useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                onClose();
-            }
-        };
-        window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [onClose]);
-
     return (
         <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-2xl w-full max-w-lg mx-auto flex flex-col">
             <div className="flex justify-between items-center mb-4">
@@ -80,3 +64,5 @@ export const BubbleWrap: React.FC<BubbleWrapProps> = ({ onClose }) => {
         </div>
     );
 };
+
+

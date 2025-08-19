@@ -1,10 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { speak } from '../services/speechService';
-
-interface BreathingExerciseProps {
-    onClose: () => void;
-}
 
 const breathingSteps = [
     { text: 'Breathe In', duration: 4000 },
@@ -12,7 +7,7 @@ const breathingSteps = [
     { text: 'Breathe Out', duration: 6000 },
 ];
 
-export const BreathingExercise: React.FC<BreathingExerciseProps> = ({ onClose }) => {
+export const BreathingExercise = ({ onClose }) => {
     const [step, setStep] = useState(0);
     const [bubbleStyle, setBubbleStyle] = useState({ transform: 'scale(0.8)', opacity: 0.7 });
 
@@ -25,7 +20,6 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({ onClose })
         } else if (currentStep.text === 'Breathe Out') {
             setBubbleStyle({ transform: 'scale(0.8)', opacity: 0.7 });
         }
-        // On 'Hold', style remains the same as 'Breathe In' state
 
         const timer = setTimeout(() => {
             setStep((prevStep) => (prevStep + 1) % breathingSteps.length);
@@ -35,7 +29,7 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({ onClose })
     }, [step]);
 
     useEffect(() => {
-        const handleKeyPress = (e: KeyboardEvent) => {
+        const handleKeyPress = (e) => {
             if (e.key === 'Escape') {
                 onClose();
             }
@@ -75,3 +69,5 @@ export const BreathingExercise: React.FC<BreathingExerciseProps> = ({ onClose })
         </div>
     );
 };
+
+
