@@ -6,6 +6,11 @@ const Bubble = ({ popped, onPop }) => {
     const [isPopped, setIsPopped] = useState(popped);
     const [isAnimating, setIsAnimating] = useState(false);
 
+    // Update local state when prop changes (for reset functionality)
+    React.useEffect(() => {
+        setIsPopped(popped);
+    }, [popped]);
+
     const handleClick = () => {
         if (!isPopped) {
             setIsPopped(true);
