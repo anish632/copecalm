@@ -6,8 +6,9 @@ import App from './App';
 // Register service worker for background audio support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', {
-      scope: '/'
+    const swPath = import.meta.env.BASE_URL + 'sw.js';
+    navigator.serviceWorker.register(swPath, {
+      scope: import.meta.env.BASE_URL
     })
     .then((registration) => {
       console.log('Service Worker registered successfully:', registration.scope);
