@@ -33,77 +33,37 @@ export const speak = async (text, duration = 4000) => {
         return;
     }
 
-    // Check if mobile - use simple direct speech synthesis for mobile reliability
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Use direct speech synthesis for all browsers for reliability
+    try {
+        await voicesPromise;
+    } catch (error) {
+        console.error("Speech synthesis failed:", error);
+        return;
+    }
     
-    if (isMobile) {
-        // Mobile: Use direct, simple speech synthesis
-        try {
-            await voicesPromise;
-        } catch (error) {
-            console.error("Speech synthesis failed:", error);
-            return;
-        }
-        
-        synth.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        
-        const usVoice = voices.find(voice => voice.lang === 'en-US' && voice.localService);
-        if (usVoice) {
-            utterance.voice = usVoice;
-        } else {
-            const fallbackVoice = voices.find(voice => voice.lang === 'en-US');
-            if (fallbackVoice) {
-                utterance.voice = fallbackVoice;
-            }
-        }
-        
-        synth.speak(utterance);
+    synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    
+    const usVoice = voices.find(voice => voice.lang === 'en-US' && voice.localService);
+    if (usVoice) {
+        utterance.voice = usVoice;
     } else {
-        // Desktop: Use background audio service for enhanced capabilities
-        try {
-            await backgroundAudioService.speak(text, duration);
-        } catch (error) {
-            console.error("Background audio failed, falling back to regular speech:", error);
-            // Fallback to regular speech synthesis
-            try {
-                await voicesPromise;
-            } catch (voiceError) {
-                console.error("Speech synthesis failed:", voiceError);
-                return;
-            }
-            
-            synth.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            const usVoice = voices.find(voice => voice.lang === 'en-US' && voice.localService);
-            if (usVoice) {
-                utterance.voice = usVoice;
-            } else {
-                const fallbackVoice = voices.find(voice => voice.lang === 'en-US');
-                if (fallbackVoice) {
-                    utterance.voice = fallbackVoice;
-                }
-            }
-            synth.speak(utterance);
+        const fallbackVoice = voices.find(voice => voice.lang === 'en-US');
+        if (fallbackVoice) {
+            utterance.voice = fallbackVoice;
         }
     }
+    
+    synth.speak(utterance);
 };
 
 export const toggleMute = () => {
     muted = !muted;
     if (muted && synth) {
         synth.cancel();
-    }
-    // Only use background service on desktop
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (!isMobile) {
-        backgroundAudioService.toggleMute();
     }
     return muted;
 };
@@ -114,20 +74,6 @@ export const stopSpeech = () => {
     if (synth) {
         synth.cancel();
     }
-    // Only use background service on desktop
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (!isMobile) {
-        backgroundAudioService.stop();
-    }
-};
-
-export const requestAudioPermissions = async () => {
-    // Only request special permissions on desktop
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (!isMobile) {
-        return await backgroundAudioService.requestPermissions();
-    }
-    return Promise.resolve();
 };
 
 
