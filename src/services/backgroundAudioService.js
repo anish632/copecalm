@@ -55,26 +55,33 @@ class BackgroundAudioService {
     await this.initialize();
 
     try {
-      // Ensure audio context is running
+      // Ensure audio context is running (important for mobile)
       if (this.audioContext && this.audioContext.state === 'suspended') {
         await this.audioContext.resume();
       }
 
-      // Use service worker for background speech if available
-      if (this.serviceWorker && this.serviceWorker.active) {
-        this.serviceWorker.active.postMessage({
-          type: 'BREATHING_AUDIO',
-          action: 'speak',
-          text: text,
-          duration: duration
-        });
-      } else {
-        // Fallback to regular speech synthesis
+      // Check if we're on mobile - prioritize direct speech synthesis for mobile compatibility
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // For mobile, use direct speech synthesis for better compatibility
         await this.fallbackSpeak(text);
+      } else {
+        // For desktop, try service worker first, then fallback
+        if (this.serviceWorker && this.serviceWorker.active) {
+          this.serviceWorker.active.postMessage({
+            type: 'BREATHING_AUDIO',
+            action: 'speak',
+            text: text,
+            duration: duration
+          });
+        } else {
+          await this.fallbackSpeak(text);
+        }
       }
 
-      // Show notification for background guidance
-      if ('Notification' in window && Notification.permission === 'granted') {
+      // Show notification for background guidance (only on desktop to avoid mobile issues)
+      if (!isMobile && 'Notification' in window && Notification.permission === 'granted') {
         new Notification('Breathing Guide', {
           body: text,
           icon: '/favicon.ico',
@@ -86,7 +93,7 @@ class BackgroundAudioService {
 
     } catch (error) {
       console.error('Speech synthesis failed:', error);
-      // Try fallback method
+      // Always try direct fallback method
       await this.fallbackSpeak(text);
     }
   }
@@ -94,6 +101,7 @@ class BackgroundAudioService {
   async fallbackSpeak(text) {
     return new Promise((resolve) => {
       if (!('speechSynthesis' in window)) {
+        console.log('Speech synthesis not supported');
         resolve();
         return;
       }
@@ -107,24 +115,75 @@ class BackgroundAudioService {
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
 
-      // Get voices
-      const voices = window.speechSynthesis.getVoices();
-      const usVoice = voices.find(voice => voice.lang === 'en-US' && voice.localService);
-      
-      if (usVoice) {
-        utterance.voice = usVoice;
-      } else {
-        const fallbackVoice = voices.find(voice => voice.lang === 'en-US');
-        if (fallbackVoice) {
-          utterance.voice = fallbackVoice;
-        }
+      // Mobile-specific adjustments
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        // Slower rate for mobile for better clarity
+        utterance.rate = 0.9;
+        // Force local voice on mobile for better reliability
+        utterance.localService = true;
       }
 
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
+      // Function to set voice when available
+      const setVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+          // If no voices loaded yet, try again shortly
+          setTimeout(setVoice, 100);
+          return;
+        }
 
-      this.currentUtterance = utterance;
-      window.speechSynthesis.speak(utterance);
+        // Prefer local voices for mobile reliability
+        let selectedVoice = null;
+        if (isMobile) {
+          selectedVoice = voices.find(voice => 
+            voice.lang.startsWith('en') && voice.localService
+          );
+        }
+        
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang === 'en-US' && voice.localService);
+        }
+        
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang === 'en-US');
+        }
+        
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+        }
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          console.log('Selected voice:', selectedVoice.name, 'Local:', selectedVoice.localService);
+        }
+
+        // Speak the utterance
+        this.currentUtterance = utterance;
+        try {
+          window.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.error('Speech synthesis error:', error);
+          resolve();
+        }
+      };
+
+      utterance.onstart = () => {
+        console.log('Speech started:', text);
+      };
+      
+      utterance.onend = () => {
+        console.log('Speech ended:', text);
+        resolve();
+      };
+      
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        resolve();
+      };
+
+      // Set voice and speak
+      setVoice();
     });
   }
 
