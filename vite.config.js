@@ -3,5 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/copecalm/'
+  base: '/copecalm/',
+  define: {
+    __PWA_DISABLED__: true
+  }
 })
