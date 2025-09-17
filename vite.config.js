@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/copecalm/',
+  base: process.env.NODE_ENV === 'production' ? '/copecalm/' : '/',
   define: {
     __PWA_DISABLED__: true
   }
