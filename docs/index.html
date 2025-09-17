@@ -16,7 +16,46 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <!-- Safari polyfills for older versions -->
+    <script>
+      // Polyfill for Promise if not available (Safari < 8)
+      if (typeof Promise === 'undefined') {
+        document.write('<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"><\/script>');
+      }
+      // Polyfill for fetch if not available (Safari < 10.1)
+      if (typeof fetch === 'undefined') {
+        document.write('<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js"><\/script>');
+      }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Check if browser supports ES modules
+      var supportsESModules = (function() {
+        try {
+          new Function('import("")');
+          return true;
+        } catch (e) {
+          return false;
+        }
+      })();
+
+      if (supportsESModules) {
+        // Load ES module for modern browsers
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = '/src/index.jsx';
+        document.head.appendChild(script);
+      } else {
+        // Fallback message for very old Safari
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('root').innerHTML =
+            '<div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">' +
+            '<h1>Browser Update Required</h1>' +
+            '<p>This app requires a modern browser. Please update Safari to the latest version.</p>' +
+            '</div>';
+        });
+      }
+    </script>
     <script>
       tailwind.config = {
         darkMode: 'media',
@@ -79,7 +118,7 @@
         -moz-osx-font-smoothing: grayscale;
       }
     </style>
-    <script type="module" crossorigin src="/copecalm/assets/index-B7qL0MNy.js"></script>
+    <script type="module" crossorigin src="/copecalm/assets/index-CPBGY2U6.js"></script>
   </head>
   <body class="bg-slate-100 dark:bg-gray-900">
     <div id="root"></div>

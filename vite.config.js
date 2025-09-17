@@ -8,10 +8,12 @@ export default defineConfig({
     __PWA_DISABLED__: true
   },
   build: {
-    target: ['es2015', 'safari12'],
+    target: 'es2015',
+    polyfillDynamicImport: false,
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: undefined,
+        format: 'iife'
       }
     }
   },
