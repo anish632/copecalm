@@ -97,6 +97,17 @@ export default function App() {
     const [isAudioMuted, setIsAudioMuted] = useState(isMuted());
     const [affirmation, setAffirmation] = useState(AFFIRMATIONS[0]);
 
+    // Safari compatibility check
+    const isSafari = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
+    useEffect(() => {
+        // Safari-specific initialization
+        if (isSafari) {
+            // Ensure proper touch handling
+            document.addEventListener('touchstart', function() {}, {passive: true});
+        }
+    }, [isSafari]);
+
     useEffect(() => {
         const interval = setInterval(() => {
             setAffirmation(AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)]);

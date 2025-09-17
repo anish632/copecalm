@@ -17,6 +17,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="/src/index.jsx"></script>
     <script>
       tailwind.config = {
         darkMode: 'media',
@@ -24,13 +25,30 @@
           extend: {
             keyframes: {
               breathe: {
-                '0%, 100%': { transform: 'scale(0.8)', opacity: '0.7' },
-                '50%': { transform: 'scale(1.2)', opacity: '1' },
+                '0%, 100%': {
+                  transform: 'scale(0.8)',
+                  opacity: '0.7',
+                  '-webkit-transform': 'scale(0.8)'
+                },
+                '50%': {
+                  transform: 'scale(1.2)',
+                  opacity: '1',
+                  '-webkit-transform': 'scale(1.2)'
+                },
               },
               pop: {
-                '0%': { transform: 'scale(1)' },
-                '50%': { transform: 'scale(0.8)' },
-                '100%': { transform: 'scale(1)' },
+                '0%': {
+                  transform: 'scale(1)',
+                  '-webkit-transform': 'scale(1)'
+                },
+                '50%': {
+                  transform: 'scale(0.8)',
+                  '-webkit-transform': 'scale(0.8)'
+                },
+                '100%': {
+                  transform: 'scale(1)',
+                  '-webkit-transform': 'scale(1)'
+                },
               }
             },
             animation: {
@@ -41,6 +59,27 @@
         },
       }
     </script>
+    <style>
+      /* Safari-specific CSS fixes */
+      @-webkit-keyframes breathe {
+        0%, 100% { -webkit-transform: scale(0.8); opacity: 0.7; }
+        50% { -webkit-transform: scale(1.2); opacity: 1; }
+      }
+      @-webkit-keyframes pop {
+        0% { -webkit-transform: scale(1); }
+        50% { -webkit-transform: scale(0.8); }
+        100% { -webkit-transform: scale(1); }
+      }
+      /* Ensure proper viewport handling on Safari */
+      html {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
   </head>
   <body class="bg-slate-100 dark:bg-gray-900">
     <div id="root"></div>
