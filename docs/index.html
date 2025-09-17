@@ -29,29 +29,13 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // Check if browser supports ES modules
-      var supportsESModules = (function() {
-        try {
-          new Function('import("")');
-          return true;
-        } catch (e) {
-          return false;
-        }
-      })();
-
-      if (supportsESModules) {
-        // Load ES module for modern browsers
-        var script = document.createElement('script');
-        script.type = 'module';
-        script.src = '/src/index.jsx';
-        document.head.appendChild(script);
-      } else {
-        // Fallback message for very old Safari
+      // Simple fallback for very old browsers
+      if (!window.Promise || !window.fetch) {
         document.addEventListener('DOMContentLoaded', function() {
           document.getElementById('root').innerHTML =
             '<div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">' +
             '<h1>Browser Update Required</h1>' +
-            '<p>This app requires a modern browser. Please update Safari to the latest version.</p>' +
+            '<p>This app requires a modern browser. Please update your browser to the latest version.</p>' +
             '</div>';
         });
       }
